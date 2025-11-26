@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Weather App</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #74ebd5, #acb6e5);
+            padding: 40px;
+        }
+
+        .container {
+            width: 470px;
+            background: #ffffff;
+            margin: auto;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.2);
+        }
+
+        input {
+            width: 70%;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid gray;
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .result-box {
+            margin-top: 20px;
+            text-align: left;
+            padding: 15px;
+            background: #f4f4f4;
+            border-radius: 8px;
+        }
+
+        .label {
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2 style="text-align:center;">🌤 Live Weather App</h2>
+
+        <input id="cityInput" type="text" placeholder="Enter city name">
+        <button onclick="getWeather()">Search</button>
+
+        <div id="result" class="result-box"></div>
+    </div>
+
+<script>
+
+function getWeather() {
+    let city = document.getElementById("cityInput").value;
+
+    if (city.trim() === "") {
+        alert("Please enter a city name");
+        return;
+    }
+
+    fetch("http://localhost:8080/api/city?city=" + city)
+        .then(response => response.json())
+        .then(data => {
+            let html = `
+                <p><span class='label'>City:</span> ${data.city}</p>
+                <p><span class='label'>Country:</span> ${data.country}</p>
+
+                <p><span class='label'>Latitude:</span> ${data.lat}</p>
+                <p><span class='label'>Longitude:</span> ${data.lon}</p>
+
+                <p><span class='label'>Temperature:</span> ${data.temperature} °C</p>
+                <p><span class='label'>Feels Like:</span> ${data.feelsLike} °C</p>
+                <p><span class='label'>Min Temp:</span> ${data.tempMin} °C</p>
+                <p><span class='label'>Max Temp:</span> ${data.tempMax} °C</p>
+
+                <p><span class='label'>Humidity:</span> ${data.humidity}%</p>
+                <p><span class='label'>Pressure:</span> ${data.pressure} hPa</p>
+
+                <p><span class='label'>Wind Speed:</span> ${data.windSpeed} m/s</p>
+                <p><span class='label'>Wind Degree:</span> ${data.windDegree}°</p>
+
+                <p><span class='label'>Cloudiness:</span> ${data.cloudPercentage}%</p>
+                <p><span class='label'>Visibility:</span> ${data.visibility}</p>
+
+                <p><span class='label'>Conditions:</span> ${data.condition}</p>
+
+                <p><span class='label'>Sunrise:</span> ${data.sunrise}</p>
+                <p><span class='label'>Sunset:</span> ${data.sunset}</p>
+            `;
+
+            document.getElementById("result").innerHTML = html;
+        })
+        .catch(err => {
+            document.getElementById("result").innerHTML =
+                "<p style='color:red;'>City not found or API error!</p>";
+        });
+}
+
+</script>
